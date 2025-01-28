@@ -6,6 +6,7 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.zek.stopwatch.R
 import com.zek.stopwatch.util.Constants.NOTIFICATION_CHANNEL_ID
 import com.zek.stopwatch.util.Constants.NOTIFICATION_CHANNEL_NAME
 
@@ -27,5 +28,8 @@ object NotificationUtils {
             NOTIFICATION_CHANNEL_ID
         ).setAutoCancel(false)
             .setOngoing(true)
+            .setSmallIcon(R.drawable.ic_launcher_foreground)
+            .setContentTitle("Stop Watch")
+            .setOnlyAlertOnce(true)
 
 }
