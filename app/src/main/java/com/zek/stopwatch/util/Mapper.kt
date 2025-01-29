@@ -12,10 +12,6 @@ object Mapper {
 
     @RequiresApi(Build.VERSION_CODES.S)
     fun Long.toTimeUiFormat(): String {
-//        val timeZone = Instant.ofEpochMilli(this)
-//            .atZone(ZoneId.systemDefault())
-//
-//        return timeZone.format(DateTimeFormatter.ofPattern("mm:ss.SS"))
         val duration = Duration.ofMillis(this)
         val minutes = duration.toMinutes()
         val seconds = duration.seconds % 60
@@ -23,4 +19,11 @@ object Mapper {
         return "%02d:%02d.%02d".format(minutes, seconds, millis)
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
+    fun Long.ToLapTimeUiNotification(): String {
+        val duration = Duration.ofMillis(this)
+        val minutes = duration.toMinutes()
+        val seconds = duration.seconds % 60
+        return "%02d:%02d".format(minutes, seconds)
+    }
 }

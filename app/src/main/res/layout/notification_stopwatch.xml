@@ -1,42 +1,58 @@
-<!--<?xml version="1.0" encoding="utf-8"?>-->
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#FF1C1C1E"
     android:padding="16dp">
 
-<!--    &lt;!&ndash; Timer Text &ndash;&gt;-->
-<!--    <TextView-->
-<!--        android:id="@+id/tv_timer"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:text="00:00.00"-->
-<!--        android:textColor="#FFFFFF"-->
-<!--        android:textSize="24sp"-->
-<!--        android:layout_alignParentEnd="true"-->
-<!--        android:layout_centerVertical="true" />-->
+    <!-- Stop Icon (Top Left) -->
+    <ImageView
+        android:id="@+id/iv_stop"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="stop"
+        android:src="@drawable/ic_start"
+        android:tint="#FF9800"
+        android:layout_centerVertical="true"/>
 
-<!--    &lt;!&ndash; Stop Icon &ndash;&gt;-->
-<!--    <ImageView-->
-<!--        android:id="@+id/iv_stop"-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_height="40dp"-->
-<!--        android:layout_marginEnd="16dp"-->
-<!--        android:layout_toStartOf="@id/tv_timer"-->
-<!--        android:layout_centerVertical="true"-->
-<!--        android:src="@drawable/ic_stop"-->
-<!--        android:contentDescription="@string/stop"-->
-<!--        android:tint="#FFFFFF" />-->
+    <!-- Reset Icon (Next to Stop Icon) -->
+    <ImageView
+        android:id="@+id/iv_reset"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/iv_stop"
+        android:contentDescription="reset"
+        android:src="@drawable/ic_lap"
+        android:tint="#A2A2A2" />
 
-<!--    &lt;!&ndash; Reset Icon &ndash;&gt;-->
-<!--    <ImageView-->
-<!--        android:id="@+id/iv_reset"-->
-<!--        android:layout_width="40dp"-->
-<!--        android:layout_height="40dp"-->
-<!--        android:layout_toStartOf="@id/iv_stop"-->
-<!--        android:layout_marginEnd="16dp"-->
-<!--        android:layout_centerVertical="true"-->
-<!--        android:src="@drawable/ic_reset"-->
-<!--        android:contentDescription="@string/reset"-->
-<!--        android:tint="#FFFFFF" />-->
+    <!-- Lap Text (Above Timer, Both at Top-Right) -->
+    <TextView
+        android:id="@+id/tv_lap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="Lap 2  00:00"
+        android:textColor="#FF9800"
+        android:textSize="14sp"
+        android:visibility="gone"
+        />
+
+    <!-- Timer Text (Below Lap Text) -->
+    <TextView
+        android:id="@+id/tv_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_lap"
+        android:layout_alignParentEnd="true"
+        android:text="00:00.00"
+        android:textColor="#FF9800"
+        android:textSize="36sp" />
+
 </RelativeLayout>
+
+
+
+

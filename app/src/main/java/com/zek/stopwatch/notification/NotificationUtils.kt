@@ -2,11 +2,15 @@ package com.zek.stopwatch.notification
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.DecoratedCustomViewStyle
 import com.zek.stopwatch.R
+import com.zek.stopwatch.presentation.MainActivity
 import com.zek.stopwatch.util.Constants.NOTIFICATION_CHANNEL_ID
 import com.zek.stopwatch.util.Constants.NOTIFICATION_CHANNEL_NAME
 
@@ -26,10 +30,21 @@ object NotificationUtils {
         NotificationCompat.Builder(
             context,
             NOTIFICATION_CHANNEL_ID
-        ).setAutoCancel(false)
+        )
+            .setStyle(DecoratedCustomViewStyle())
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setAutoCancel(false)
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Stop Watch")
             .setOnlyAlertOnce(true)
+            .setContentIntent(
+                PendingIntent.getActivity(
+                    context,
+                    0,
+                    Intent(context, MainActivity::class.java),
+                    PendingIntent.FLAG_IMMUTABLE
+                )
+            )
 
 }

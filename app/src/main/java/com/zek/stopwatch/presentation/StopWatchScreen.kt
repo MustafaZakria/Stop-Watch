@@ -65,9 +65,9 @@ fun StopWatchScreen() {
     val lapTimesUi = rememberSaveable { mutableStateOf(listOf<String>()) }
 
     LaunchedEffect(millis, lapTimes) {
-        val newList = lapTimes.value
+        val newList = lapTimes.value.toMutableList()
         if(newList.size > 0) {
-            newList[newList.lastIndex] = millis
+            newList[newList.lastIndex] = millis - lapTimes.value.last()
             lapTimesUi.value = newList.map { it.toTimeUiFormat() }
         } else {
             lapTimesUi.value = listOf()
