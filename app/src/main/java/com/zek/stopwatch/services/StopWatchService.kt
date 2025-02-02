@@ -66,11 +66,11 @@ class StopWatchService : LifecycleService() {
             provideNotificationChannel()
         )
 
-//        coroutineScope.launch {
-//            isTimeActive.collect { isActive ->
-//                updateNotificationActions(isActive)
-//            }
-//        }
+        coroutineScope.launch {
+            isTimeActive.collect { isActive ->
+                updateNotificationActions(isActive)
+            }
+        }
     }
 
     private fun updateNotificationActions(active: Boolean) {
@@ -104,7 +104,7 @@ class StopWatchService : LifecycleService() {
         customView.setOnClickPendingIntent(R.id.iv_stop, pendingIntentStart)
         customView.setOnClickPendingIntent(R.id.iv_reset, pendingIntentReset)
 
-//        notificationManager.notify(NOTIFICATION_ID, baseNotificationBuilder.build())
+        notificationManager.notify(NOTIFICATION_ID, baseNotificationBuilder.build())
     }
 
 
@@ -140,7 +140,6 @@ class StopWatchService : LifecycleService() {
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private var isTimeRunning = false
 
     @RequiresApi(Build.VERSION_CODES.S)
     private fun startForegroundService() {
@@ -169,10 +168,6 @@ class StopWatchService : LifecycleService() {
                         customView.setViewVisibility(R.id.tv_lap, View.VISIBLE)
                     }
 
-//                    if(isTimeActive.value != isTimeRunning) {
-                        updateNotificationActions(isTimeActive.value)
-//                        isTimeRunning = isTimeActive.value
-//                    }
                     notificationManager.notify(NOTIFICATION_ID, baseNotificationBuilder.build())
                 }
         }
