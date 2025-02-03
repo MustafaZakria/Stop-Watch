@@ -38,7 +38,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.zek.stopwatch.R
+import com.zek.stopwatch.data.entities.StopWatchRecord
+import com.zek.stopwatch.presentation.MainViewModel
 import com.zek.stopwatch.presentation.components.CircleButtonBox
 import com.zek.stopwatch.presentation.components.LapTimeItem
 import com.zek.stopwatch.presentation.ui.theme.StopWatchTheme
@@ -53,7 +56,9 @@ import com.zek.stopwatch.util.Mapper.toTimeUiFormat
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
-fun StopWatchScreen() {
+fun StopWatchScreen(
+    viewModel: MainViewModel = hiltViewModel()
+) {
 
     val context = LocalContext.current
     val isTimeActive by isTimeActive.collectAsState()
@@ -64,7 +69,7 @@ fun StopWatchScreen() {
 
     LaunchedEffect(millis, lapTimes) {
         val newList = lapTimes.value.toMutableList()
-        if(newList.size > 0) {
+        if (newList.size > 0) {
             newList[newList.lastIndex] = millis - lapTimes.value.last()
         } else {
             lapTimesUi.value = listOf()
@@ -96,6 +101,14 @@ fun StopWatchScreen() {
                 it.action = action
                 context.startService(it)
             }
+        },
+        onSavedClick = {
+            viewModel.insertRecord(
+                StopWatchRecord(
+                    totalTime = millis,
+                    lapTimes = lapTimesUi.value
+                )
+            )
         }
     )
 }
@@ -107,7 +120,8 @@ fun StopWatchScreenContent(
     millis: Long,
     lapItems: List<Long>,
     onStartClick: () -> Unit,
-    onResetClick: () -> Unit
+    onResetClick: () -> Unit,
+    onSavedClick: () -> Unit
 ) {
 
     val textButtonOne = if (isTimeActive) "Stop" else "Start"
@@ -168,13 +182,21 @@ fun StopWatchScreenContent(
                                     ),
                                     textColor = if (millis > 0) Color.White else Color(0xFF858585),
                                     text = textButtonTwo,
-                                    onClick = { onResetClick.invoke() }
+                                    onClick = {
+                                        if (millis > 0)
+                                            onResetClick.invoke()
+                                    }
                                 )
                                 Icon(
                                     imageVector = ImageVector.vectorResource(R.drawable.ic_save),
                                     contentDescription = "save",
-                                    tint = Color.White,
-                                    modifier = Modifier.size(24.dp).clickable{}
+                                    tint = if (millis > 0) Color.White else Color(0x74282828),
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .clickable {
+                                            if (millis > 0)
+                                                onSavedClick.invoke()
+                                        }
                                 )
                                 CircleButtonBox(
                                     backgroundColor = colorButtonOne,
@@ -208,8 +230,6 @@ fun StopWatchScreenContent(
 }
 
 
-
-
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 @Preview(showBackground = true)
@@ -220,7 +240,8 @@ fun StopWatchScreenPreview() {
             millis = 1163362L,
             lapItems = listOf(1163362L, 1163362L, 1163362L),
             onResetClick = {},
-            onStartClick = {}
+            onStartClick = {},
+            onSavedClick = {}
         )
     }
 }

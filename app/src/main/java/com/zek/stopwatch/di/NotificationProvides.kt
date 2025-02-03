@@ -36,7 +36,7 @@ object NotificationProvides {
 
     @Provides
     @ServiceScoped
-    fun provideBaseNotificationBuilder(context: Context) =
+    fun provideBaseNotificationBuilder(@ApplicationContext context: Context) =
         NotificationCompat.Builder(
             context,
             NOTIFICATION_CHANNEL_ID

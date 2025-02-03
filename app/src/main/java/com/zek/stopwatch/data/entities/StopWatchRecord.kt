@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class StopWatchRecord(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    val totalTime: String,
-    val lapTimes: String
+    val id: Int = 0,
+    val totalTime: Long,
+    val lapTimes: List<Long>
 )

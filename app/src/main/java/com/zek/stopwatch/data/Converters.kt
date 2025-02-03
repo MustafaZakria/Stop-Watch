@@ -12,5 +12,4 @@ class Converters {
     fun fromList(list: List<Long>): String {
         return list.joinToString(",")
     }
-
 }

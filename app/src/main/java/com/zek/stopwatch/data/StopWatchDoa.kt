@@ -10,8 +10,8 @@ import kotlinx.coroutines.flow.Flow
 interface StopWatchDoa {
 
     @Query("SELECT * FROM StopWatchRecord")
-    suspend fun getStopWatchRecords(): Flow<List<StopWatchRecord>>
+    fun getStopWatchRecords(): Flow<List<StopWatchRecord>>
 
     @Insert
-    suspend fun addStopWatchRecord(stopWatchRecord: StopWatchRecord)
+    fun addStopWatchRecord(stopWatchRecord: StopWatchRecord)
 }

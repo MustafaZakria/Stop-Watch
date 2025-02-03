@@ -13,8 +13,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import com.zek.stopwatch.R
-import com.zek.stopwatch.notification.NotificationUtils.provideBaseNotificationBuilder
-import com.zek.stopwatch.notification.NotificationUtils.provideNotificationChannel
 import com.zek.stopwatch.util.Constants.ACTION_LAP
 import com.zek.stopwatch.util.Constants.ACTION_RESET
 import com.zek.stopwatch.util.Constants.ACTION_START
@@ -42,13 +40,13 @@ class StopWatchService : LifecycleService() {
     private lateinit var coroutineScope: CoroutineScope
 
     @Inject
-    private lateinit var notificationManager: NotificationManager
+    lateinit var notificationManager: NotificationManager
 
     @Inject
-    private lateinit var baseNotificationBuilder: NotificationCompat.Builder
+    lateinit var baseNotificationBuilder: NotificationCompat.Builder
 
     @Inject
-    private lateinit var notificationChannel: NotificationChannel
+    lateinit var notificationChannel: NotificationChannel
 
     private lateinit var customView: RemoteViews
 
