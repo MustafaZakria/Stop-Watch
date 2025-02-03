@@ -1,5 +1,6 @@
 package com.zek.stopwatch.services
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -21,6 +22,7 @@ import com.zek.stopwatch.util.Constants.ACTION_STOP
 import com.zek.stopwatch.util.Constants.NOTIFICATION_ID
 import com.zek.stopwatch.util.Mapper.ToLapTimeUiNotification
 import com.zek.stopwatch.util.Mapper.toTimeUiFormat
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -30,16 +32,23 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class StopWatchService : LifecycleService() {
 
     private var isFirstTime = true
 
     private lateinit var coroutineScope: CoroutineScope
 
+    @Inject
     private lateinit var notificationManager: NotificationManager
 
+    @Inject
     private lateinit var baseNotificationBuilder: NotificationCompat.Builder
+
+    @Inject
+    private lateinit var notificationChannel: NotificationChannel
 
     private lateinit var customView: RemoteViews
 
@@ -54,16 +63,12 @@ class StopWatchService : LifecycleService() {
         super.onCreate()
         coroutineScope = CoroutineScope(Dispatchers.Main + SupervisorJob())
 
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
         customView = RemoteViews(packageName, R.layout.notification_stopwatch)
 
-        baseNotificationBuilder = provideBaseNotificationBuilder(this)
-            .setCustomContentView(customView)
-
+        baseNotificationBuilder.setCustomContentView(customView)
 
         notificationManager.createNotificationChannel(
-            provideNotificationChannel()
+            notificationChannel
         )
 
         coroutineScope.launch {
