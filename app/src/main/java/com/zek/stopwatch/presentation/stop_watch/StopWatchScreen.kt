@@ -44,6 +44,7 @@ import com.zek.stopwatch.data.entities.StopWatchRecord
 import com.zek.stopwatch.presentation.MainViewModel
 import com.zek.stopwatch.presentation.components.CircleButtonBox
 import com.zek.stopwatch.presentation.components.LapTimeItem
+import com.zek.stopwatch.presentation.components.TopBarOneButton
 import com.zek.stopwatch.presentation.ui.theme.StopWatchTheme
 import com.zek.stopwatch.services.StopWatchService
 import com.zek.stopwatch.services.StopWatchService.Companion.isTimeActive
@@ -57,7 +58,8 @@ import com.zek.stopwatch.util.Mapper.toTimeUiFormat
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun StopWatchScreen(
-    viewModel: MainViewModel = hiltViewModel()
+    viewModel: MainViewModel = hiltViewModel(),
+    navigateToRecordsScreen: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -109,7 +111,8 @@ fun StopWatchScreen(
                     lapTimes = lapTimesUi.value
                 )
             )
-        }
+        },
+        onNavigateToRecords = { navigateToRecordsScreen.invoke() }
     )
 }
 
@@ -121,7 +124,8 @@ fun StopWatchScreenContent(
     lapItems: List<Long>,
     onStartClick: () -> Unit,
     onResetClick: () -> Unit,
-    onSavedClick: () -> Unit
+    onSavedClick: () -> Unit,
+    onNavigateToRecords: () -> Unit
 ) {
 
     val textButtonOne = if (isTimeActive) "Stop" else "Start"
@@ -132,7 +136,17 @@ fun StopWatchScreenContent(
 
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxSize(),
+        topBar = {
+            TopBarOneButton(
+                icon = ImageVector.vectorResource(R.drawable.ic_saved_data),
+                tint = Color(0xFFFF9800),
+                arrangement = Arrangement.End,
+                onClick = {
+                    onNavigateToRecords.invoke()
+                }
+            )
+        }
 
     ) { innerPadding ->
         Surface(
@@ -241,7 +255,8 @@ fun StopWatchScreenPreview() {
             lapItems = listOf(1163362L, 1163362L, 1163362L),
             onResetClick = {},
             onStartClick = {},
-            onSavedClick = {}
+            onSavedClick = {},
+            onNavigateToRecords = {}
         )
     }
 }

@@ -6,6 +6,7 @@ import com.zek.stopwatch.data.entities.StopWatchRecord
 import com.zek.stopwatch.repository.MainRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,6 +19,7 @@ class MainViewModel @Inject constructor(
 {
     private val _records = MutableStateFlow<List<StopWatchRecord>?>(null)
     val records = _records.asStateFlow()
+
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
