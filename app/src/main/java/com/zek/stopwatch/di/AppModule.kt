@@ -2,6 +2,7 @@ package com.zek.stopwatch.di
 
 import android.content.Context
 import androidx.room.Room
+import com.zek.stopwatch.data.local.IStopWatchDoa
 import com.zek.stopwatch.data.local.StopWatchDataBase
 import com.zek.stopwatch.util.DispatcherProvider
 import dagger.Module
@@ -32,7 +33,7 @@ object AppModule {
     @Singleton
     fun provideStopWatchDoa(
         db: StopWatchDataBase
-    ) = db.getStopWatchDoa()
+    ): IStopWatchDoa = db.getStopWatchDoa()
 
     @Provides
     @Singleton

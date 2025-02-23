@@ -6,8 +6,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,16 +26,24 @@ import com.zek.stopwatch.util.Mapper.toTimeUiFormat
 fun RecordItem(
     record: StopWatchRecord
 ) {
-    Surface {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = Color(0xFF101010)
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
         Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
-                .fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .padding(vertical = 4.dp)
         ) {
             Text(
                 text = record.totalTime.toTimeUiFormat(),
                 fontSize = 40.sp,
-                color = Color.White
+                color = Color.White,
+                modifier = Modifier.padding(8.dp)
             )
 
             record.lapTimes.reversed().apply {
