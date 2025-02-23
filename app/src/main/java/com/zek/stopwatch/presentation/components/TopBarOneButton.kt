@@ -22,11 +22,14 @@ fun TopBarOneButton(
     onClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier.padding(
-            horizontal = 16.dp,
-            vertical = 32.dp
-        )
-            .fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                start = 16.dp,
+                end = 16.dp,
+                top = 32.dp,
+                bottom = 8.dp
+            ),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = arrangement
     ) {
@@ -34,7 +37,8 @@ fun TopBarOneButton(
             imageVector = icon,
             contentDescription = null,
             tint = tint,
-            modifier = Modifier.padding(end = 8.dp)
+            modifier = Modifier
+                .padding(end = 8.dp)
                 .clickable { onClick.invoke() }
                 .size(36.dp)
         )

@@ -1,4 +1,4 @@
-package com.zek.stopwatch.data
+package com.zek.stopwatch.data.local
 
 import androidx.room.TypeConverter
 

@@ -3,7 +3,6 @@ package com.zek.stopwatch.services
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
@@ -18,7 +17,7 @@ import com.zek.stopwatch.util.Constants.ACTION_RESET
 import com.zek.stopwatch.util.Constants.ACTION_START
 import com.zek.stopwatch.util.Constants.ACTION_STOP
 import com.zek.stopwatch.util.Constants.NOTIFICATION_ID
-import com.zek.stopwatch.util.Mapper.ToLapTimeUiNotification
+import com.zek.stopwatch.util.Mapper.toLapTimeUiNotification
 import com.zek.stopwatch.util.Mapper.toTimeUiFormat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -163,7 +162,7 @@ class StopWatchService : LifecycleService() {
                     customView.setTextViewText(R.id.tv_timer, value.toTimeUiFormat())
 
                     if (lapTimes.value.size > 1) {
-                        val lapValue = (value - lapTimes.value.last()).ToLapTimeUiNotification()
+                        val lapValue = (value - lapTimes.value.last()).toLapTimeUiNotification()
                         customView.setTextViewText(
                             R.id.tv_lap,
                             "Lap ${lapTimes.value.size}  $lapValue "

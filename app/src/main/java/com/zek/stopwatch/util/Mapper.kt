@@ -3,9 +3,6 @@ package com.zek.stopwatch.util
 import android.os.Build
 import androidx.annotation.RequiresApi
 import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 object Mapper {
 
@@ -20,7 +17,7 @@ object Mapper {
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
-    fun Long.ToLapTimeUiNotification(): String {
+    fun Long.toLapTimeUiNotification(): String {
         val duration = Duration.ofMillis(this)
         val minutes = duration.toMinutes()
         val seconds = duration.seconds % 60

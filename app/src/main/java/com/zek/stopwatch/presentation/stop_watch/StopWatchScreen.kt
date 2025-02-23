@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -43,7 +45,7 @@ import com.zek.stopwatch.R
 import com.zek.stopwatch.data.entities.StopWatchRecord
 import com.zek.stopwatch.presentation.MainViewModel
 import com.zek.stopwatch.presentation.components.CircleButtonBox
-import com.zek.stopwatch.presentation.components.LapTimeItem
+import com.zek.stopwatch.presentation.stop_watch.components.LapTimeItem
 import com.zek.stopwatch.presentation.components.TopBarOneButton
 import com.zek.stopwatch.presentation.ui.theme.StopWatchTheme
 import com.zek.stopwatch.services.StopWatchService
@@ -54,6 +56,7 @@ import com.zek.stopwatch.util.Constants.ACTION_RESET
 import com.zek.stopwatch.util.Constants.ACTION_START
 import com.zek.stopwatch.util.Constants.ACTION_STOP
 import com.zek.stopwatch.util.Mapper.toTimeUiFormat
+import kotlinx.coroutines.flow.map
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -61,27 +64,28 @@ fun StopWatchScreen(
     viewModel: MainViewModel = hiltViewModel(),
     navigateToRecordsScreen: () -> Unit
 ) {
+    val isSavingInProgress by viewModel.isSavingInProgress.collectAsState()
 
     val context = LocalContext.current
     val isTimeActive by isTimeActive.collectAsState()
     val millis by millis.collectAsState()
-    val lapTimes = StopWatchService.lapTimes.collectAsState()
+    val lapTimes by StopWatchService.lapTimes.collectAsState()
 
     val lapTimesUi = rememberSaveable { mutableStateOf(listOf<Long>()) }
 
     LaunchedEffect(millis, lapTimes) {
-        val newList = lapTimes.value.toMutableList()
+        val newList = lapTimes.toMutableList()
         if (newList.size > 0) {
-            newList[newList.lastIndex] = millis - lapTimes.value.last()
-        } else {
-            lapTimesUi.value = listOf()
+            newList[newList.lastIndex] = millis - lapTimes.last()
         }
+        lapTimesUi.value = newList
     }
 
     StopWatchScreenContent(
         isTimeActive = isTimeActive,
         millis = millis,
         lapItems = lapTimesUi.value,
+        isSavingInProgress = isSavingInProgress,
         onResetClick = {
             val action = if (isTimeActive) {
                 ACTION_LAP
@@ -122,17 +126,12 @@ fun StopWatchScreenContent(
     isTimeActive: Boolean,
     millis: Long,
     lapItems: List<Long>,
+    isSavingInProgress: Boolean,
     onStartClick: () -> Unit,
     onResetClick: () -> Unit,
     onSavedClick: () -> Unit,
     onNavigateToRecords: () -> Unit
 ) {
-
-    val textButtonOne = if (isTimeActive) "Stop" else "Start"
-    val textColorButtonOne = if (isTimeActive) Color(0xFFFF1B1B) else Color(0xFF40ba0f)
-    val colorButtonOne = if (isTimeActive) Color(0x57BA0F0F) else Color(0x5740BA0F)
-
-    val textButtonTwo = if (isTimeActive || millis == 0L) "Lap" else "Reset"
 
     Scaffold(
         modifier = Modifier
@@ -147,18 +146,20 @@ fun StopWatchScreenContent(
                 }
             )
         }
-
     ) { innerPadding ->
+
         Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .padding(innerPadding),
+                .padding(innerPadding)
         ) {
             BoxWithConstraints {
                 val maxHeight = maxHeight
 
-                LazyColumn {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
                     item {
                         Column(
                             modifier = Modifier.fillMaxSize(),
@@ -183,43 +184,17 @@ fun StopWatchScreenContent(
                             }
                             Spacer(modifier = Modifier.height(16.dp))
                             //row
-                            Row(
+                            StopWatchControllingButtons(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                CircleButtonBox(
-                                    backgroundColor = if (millis > 0) Color(0x576C6C6C) else Color(
-                                        0x74282828
-                                    ),
-                                    textColor = if (millis > 0) Color.White else Color(0xFF858585),
-                                    text = textButtonTwo,
-                                    onClick = {
-                                        if (millis > 0)
-                                            onResetClick.invoke()
-                                    }
-                                )
-                                Icon(
-                                    imageVector = ImageVector.vectorResource(R.drawable.ic_save),
-                                    contentDescription = "save",
-                                    tint = if (millis > 0) Color.White else Color(0x74282828),
-                                    modifier = Modifier
-                                        .size(24.dp)
-                                        .clickable {
-                                            if (millis > 0)
-                                                onSavedClick.invoke()
-                                        }
-                                )
-                                CircleButtonBox(
-                                    backgroundColor = colorButtonOne,
-                                    textColor = textColorButtonOne,
-                                    text = textButtonOne,
-                                    onClick = { onStartClick.invoke() }
-                                )
-
-                            }
+                                onResetClick = { onResetClick.invoke() },
+                                onStartClick = { onStartClick.invoke() },
+                                onSavedClick = { onSavedClick.invoke() },
+                                millis = millis,
+                                isTimeActive = isTimeActive,
+                                isSavingInProgress = isSavingInProgress
+                            )
                             HorizontalDivider(
                                 color = Color(0x72484848),
                                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -229,18 +204,80 @@ fun StopWatchScreenContent(
 
                     itemsIndexed(lapItems.reversed()) { index, lapItem ->
 
-                        LapTimeItem(index = lapItems.size - index, time = lapItem.toTimeUiFormat())
-
-                        HorizontalDivider(
-                            color = Color(0x72484848),
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                        LapTimeItem(
+                            modifier = Modifier.padding(horizontal = 24.dp),
+                            index = lapItems.size - index,
+                            time = lapItem.toTimeUiFormat()
                         )
+
                     }
                 }
 
             }
         }
     }
+}
+
+@Composable
+fun StopWatchControllingButtons(
+    modifier: Modifier,
+    onResetClick: () -> Unit,
+    onStartClick: () -> Unit,
+    onSavedClick: () -> Unit,
+    isTimeActive: Boolean,
+    millis: Long,
+    isSavingInProgress: Boolean
+) {
+    val textButtonOne = if (isTimeActive) "Stop" else "Start"
+    val textColorButtonOne = if (isTimeActive) Color(0xFFFF1B1B) else Color(0xFF40ba0f)
+    val colorButtonOne = if (isTimeActive) Color(0x57BA0F0F) else Color(0x5740BA0F)
+
+    val textButtonTwo = if (isTimeActive || millis == 0L) "Lap" else "Reset"
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        CircleButtonBox(
+            backgroundColor = if (millis > 0) Color(0x576C6C6C) else Color(
+                0x74282828
+            ),
+            textColor = if (millis > 0) Color.White else Color(0xFF858585),
+            text = textButtonTwo,
+            onClick = {
+                if (millis > 0)
+                    onResetClick.invoke()
+            }
+        )
+        if (isSavingInProgress) {
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(24.dp),
+                color = Color.White
+            )
+        } else {
+            Icon(
+                imageVector = ImageVector.vectorResource(R.drawable.ic_save),
+                contentDescription = "save",
+                tint = if (millis > 0) Color.White else Color(0x74282828),
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable {
+                        if (millis > 0)
+                            onSavedClick.invoke()
+                    }
+            )
+        }
+        CircleButtonBox(
+            backgroundColor = colorButtonOne,
+            textColor = textColorButtonOne,
+            text = textButtonOne,
+            onClick = { onStartClick.invoke() }
+        )
+
+    }
+
 }
 
 
@@ -253,6 +290,7 @@ fun StopWatchScreenPreview() {
             isTimeActive = false,
             millis = 1163362L,
             lapItems = listOf(1163362L, 1163362L, 1163362L),
+            isSavingInProgress = true,
             onResetClick = {},
             onStartClick = {},
             onSavedClick = {},

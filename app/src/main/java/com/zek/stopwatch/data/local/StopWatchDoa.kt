@@ -1,6 +1,7 @@
-package com.zek.stopwatch.data
+package com.zek.stopwatch.data.local
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import com.zek.stopwatch.data.entities.StopWatchRecord
@@ -13,5 +14,8 @@ interface StopWatchDoa {
     fun getStopWatchRecords(): Flow<List<StopWatchRecord>>
 
     @Insert
-    fun addStopWatchRecord(stopWatchRecord: StopWatchRecord)
+    suspend fun addStopWatchRecord(stopWatchRecord: StopWatchRecord)
+
+    @Delete
+    suspend fun deleteRecordById(id: Int)
 }

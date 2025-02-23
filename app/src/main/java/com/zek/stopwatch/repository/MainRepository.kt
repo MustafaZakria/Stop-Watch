@@ -1,18 +1,27 @@
 package com.zek.stopwatch.repository
 
-import com.zek.stopwatch.data.StopWatchDoa
+import com.zek.stopwatch.data.local.StopWatchDoa
 import com.zek.stopwatch.data.entities.StopWatchRecord
-import kotlinx.coroutines.flow.map
+import com.zek.stopwatch.util.DispatcherProvider
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MainRepository @Inject constructor(
-    private val stopWatchDoa: StopWatchDoa
+    private val stopWatchDoa: StopWatchDoa,
+    private val dispatcherProvider: DispatcherProvider
 ) {
-    fun insertRecord(stopWatchRecord: StopWatchRecord) {
-        stopWatchDoa.addStopWatchRecord(stopWatchRecord)
+    suspend fun insertRecord(stopWatchRecord: StopWatchRecord) {
+        withContext(dispatcherProvider.io) {
+            stopWatchDoa.addStopWatchRecord(stopWatchRecord)
+        }
     }
 
     fun getRecords() = stopWatchDoa
         .getStopWatchRecords()
 
+    suspend fun deleteRecordById(id: Int) {
+        withContext(dispatcherProvider.io) {
+            stopWatchDoa.deleteRecordById(id)
+        }
+    }
 }
