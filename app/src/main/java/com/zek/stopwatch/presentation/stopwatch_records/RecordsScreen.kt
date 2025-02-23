@@ -3,14 +3,12 @@ package com.zek.stopwatch.presentation.stopwatch_records
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.zek.stopwatch.R
 import com.zek.stopwatch.data.entities.StopWatchRecord
 import com.zek.stopwatch.presentation.MainViewModel
+import com.zek.stopwatch.presentation.components.SwipeToDeleteContainer
 import com.zek.stopwatch.presentation.components.TopBarOneButton
 import com.zek.stopwatch.presentation.stopwatch_records.components.RecordItem
 
@@ -38,7 +37,8 @@ fun RecordsScreen(
 
     RecordsScreenContent(
         records = records,
-        onNavigateBack = {onNavigateBack.invoke()}
+        onNavigateBack = { onNavigateBack.invoke() },
+        onDeleteRecord = viewModel::deleteRecordById
     )
 }
 
@@ -46,7 +46,8 @@ fun RecordsScreen(
 @Composable
 fun RecordsScreenContent(
     records: List<StopWatchRecord>,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onDeleteRecord: (Int) -> Unit
 ) {
     Scaffold(
         modifier = Modifier
@@ -72,11 +73,19 @@ fun RecordsScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                    items(records) { record ->
+                items(
+                    items = records,
+                    key = { it.id }
+                ) { record ->
 
+                    SwipeToDeleteContainer(
+                        item = record,
+                        onDelete = { onDeleteRecord(record.id) }
+                    ) {
                         RecordItem(record)
-
                     }
+
+                }
             }
         }
     }

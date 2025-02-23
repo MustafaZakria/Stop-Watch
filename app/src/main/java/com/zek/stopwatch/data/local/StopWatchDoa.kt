@@ -16,6 +16,6 @@ interface StopWatchDoa {
     @Insert
     suspend fun addStopWatchRecord(stopWatchRecord: StopWatchRecord)
 
-    @Delete
+    @Query("DELETE FROM StopWatchRecord WHERE id = :id")
     suspend fun deleteRecordById(id: Int)
 }
