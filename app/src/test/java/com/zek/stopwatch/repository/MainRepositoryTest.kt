@@ -68,6 +68,7 @@ class MainRepositoryTest {
             repository.insertRecord(record)
 
             val result = awaitItem()
+
             assertThat(result.size, `is`(3))
             assertThat(result, `is`(records + record))
             cancel()
@@ -77,7 +78,6 @@ class MainRepositoryTest {
     @Test
     fun addRecord_insertRecordWithExistingId_returnSameListSize() = runTest {
         val record = StopWatchRecord(id = 1, totalTime = 2000, lapTimes = listOf(2, 3))
-
         repository.insertRecord(record)
 
         val result = repository.getRecords().first()

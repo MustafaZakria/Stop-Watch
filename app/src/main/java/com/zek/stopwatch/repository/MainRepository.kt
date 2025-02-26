@@ -9,17 +9,18 @@ import javax.inject.Inject
 class MainRepository @Inject constructor(
     private val stopWatchDoa: IStopWatchDoa,
     private val dispatcherProvider: DispatcherProvider
-) {
-    suspend fun insertRecord(stopWatchRecord: StopWatchRecord) {
+) : IMainRepository {
+
+    override suspend fun insertRecord(stopWatchRecord: StopWatchRecord) {
         withContext(dispatcherProvider.io) {
             stopWatchDoa.addStopWatchRecord(stopWatchRecord)
         }
     }
 
-    fun getRecords() = stopWatchDoa
+    override fun getRecords() = stopWatchDoa
         .getStopWatchRecords()
 
-    suspend fun deleteRecordById(id: Int) {
+    override suspend fun deleteRecordById(id: Int) {
         withContext(dispatcherProvider.io) {
             stopWatchDoa.deleteRecordById(id)
         }

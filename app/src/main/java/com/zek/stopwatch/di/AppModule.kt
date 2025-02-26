@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Room
 import com.zek.stopwatch.data.local.IStopWatchDoa
 import com.zek.stopwatch.data.local.StopWatchDataBase
+import com.zek.stopwatch.repository.IMainRepository
+import com.zek.stopwatch.repository.MainRepository
 import com.zek.stopwatch.util.DispatcherProvider
 import dagger.Module
 import dagger.Provides
@@ -42,6 +44,16 @@ object AppModule {
         override val main = Dispatchers.Main
         override val unconfined = Dispatchers.Unconfined
         override val default = Dispatchers.Default
-
     }
+
+    @Provides
+    @Singleton
+    fun provideMainRepository(
+        stopWatchDoa: IStopWatchDoa,
+        dispatcherProvider: DispatcherProvider
+    ): IMainRepository = MainRepository(
+        stopWatchDoa = stopWatchDoa,
+        dispatcherProvider = dispatcherProvider
+    )
+
 }
