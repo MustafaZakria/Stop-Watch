@@ -25,6 +25,7 @@ import com.zek.stopwatch.presentation.MainViewModel
 import com.zek.stopwatch.presentation.components.SwipeToDeleteContainer
 import com.zek.stopwatch.presentation.components.TopBarOneButton
 import com.zek.stopwatch.presentation.stopwatch_records.components.RecordItem
+import com.zek.stopwatch.presentation.stopwatch_records.components.ShimmerRecordItem
 
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
@@ -33,10 +34,11 @@ fun RecordsScreen(
     onNavigateBack: () -> Unit
 ) {
     val records by viewModel.records.collectAsState()
-
+    val isLoading by viewModel.isLoading.collectAsState()
 
     RecordsScreenContent(
         records = records,
+        isLoading = isLoading,
         onNavigateBack = { onNavigateBack.invoke() },
         onDeleteRecord = viewModel::deleteRecordById
     )
@@ -46,6 +48,7 @@ fun RecordsScreen(
 @Composable
 fun RecordsScreenContent(
     records: List<StopWatchRecord>,
+    isLoading: Boolean,
     onNavigateBack: () -> Unit,
     onDeleteRecord: (Int) -> Unit
 ) {
@@ -73,18 +76,29 @@ fun RecordsScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(
-                    items = records,
-                    key = { it.id }
-                ) { record ->
+                if (isLoading) {
 
-                    SwipeToDeleteContainer(
-                        item = record,
-                        onDelete = { onDeleteRecord(record.id) }
-                    ) {
-                        RecordItem(record)
+                    items(3) {
+                        ShimmerRecordItem(modifier = Modifier.padding(8.dp))
                     }
 
+                } else {
+                    items(
+                        items = records,
+                        key = { it.id }
+                    ) { record ->
+
+                        SwipeToDeleteContainer(
+                            item = record,
+                            onDelete = { onDeleteRecord(record.id) }
+                        ) {
+                            RecordItem(
+                                record,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
+
+                    }
                 }
             }
         }

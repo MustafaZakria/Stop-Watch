@@ -24,7 +24,8 @@ import com.zek.stopwatch.util.Mapper.toTimeUiFormat
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun RecordItem(
-    record: StopWatchRecord
+    record: StopWatchRecord,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = Modifier
@@ -36,14 +37,12 @@ fun RecordItem(
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .padding(vertical = 4.dp)
+            modifier = modifier
         ) {
             Text(
                 text = record.totalTime.toTimeUiFormat(),
                 fontSize = 40.sp,
                 color = Color.White,
-                modifier = Modifier.padding(8.dp)
             )
 
             record.lapTimes.reversed().apply {
